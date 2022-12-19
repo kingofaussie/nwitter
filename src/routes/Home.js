@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { dbService } from 'fbase';
 import { collection, addDoc, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import { async } from '@firebase/util';
+import Nweet from 'components/Nweet';
 
 
 const Home = ({ userObj }) => {
@@ -10,7 +11,6 @@ const Home = ({ userObj }) => {
     useEffect(() => {
       const q = query(
         collection(dbService, "nweets"),
-        where('createdAt','>','0'),
         orderBy("createdAt","desc")
       );
       onSnapshot(q, (snapshot) => {
@@ -51,9 +51,11 @@ const Home = ({ userObj }) => {
           </form>
           <div>
             {nweets.map((nweet) => (
-              <div key={nweet.id}>
-                <h4>{nweet.text}</h4>
-              </div>
+              <Nweet
+                key={nweet.id}
+                nweetObj={nweet}
+                isOwner={nweet.creatorId === userObj.uid}
+              />
             ))}
           </div>
       </div>
