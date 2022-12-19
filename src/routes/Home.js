@@ -1,12 +1,6 @@
-<<<<<<< Updated upstream
 import React, { useEffect, useRef, useState } from "react";
 import { dbService, storageService } from 'fbase';
 import { collection, addDoc, onSnapshot, query, orderBy, where } from 'firebase/firestore';
-=======
-import React, { useEffect, useState } from "react";
-import { dbService } from 'fbase';
-import { collection, addDoc, getDocs, query, onSnapshot, orderBy } from 'firebase/firestore';
->>>>>>> Stashed changes
 import { async } from '@firebase/util';
 import Nweet from 'components/Nweet';
 import { getDownloadURL, ref, uploadString } from "@firebase/storage";
@@ -14,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const Home = ({ userObj }) => {
-<<<<<<< Updated upstream
     const [nweet, setNweet] = useState("");
     const [nweets, setNweets] = useState([]);
     const [attachment, setAttachment] = useState("");
@@ -49,31 +42,6 @@ const Home = ({ userObj }) => {
     await addDoc(collection(dbService, "nweets"),nweetObj);
     setNweet(""); 
     setAttachment("");
-=======
-  const [nweet, setNweet] = useState("");
-  const [nweets, setNweets] = useState([]);
-  useEffect(() => {
-    const q = query(
-      collection(dbService, "nweets"),
-      orderBy("createdAt","desc")
-    );
-    onSnapshot(q, (snapshot) => {
-      const nweetArr = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setNweets(nweetArr);
-    });
-    }, []);
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    await addDoc(collection(dbService, "nweets"), {
-      text:nweet,
-      createdAt: Date.now(),
-      creatorId: userObj.uid,
-    });
-    setNweet("");
->>>>>>> Stashed changes
   };
   const onChange = (event) => {
     const { 
@@ -81,7 +49,6 @@ const Home = ({ userObj }) => {
     } = event;
     setNweet(value); 
   };
-<<<<<<< Updated upstream
   const onFileChange = (event) => {
     const {
       target: { files },
@@ -101,8 +68,6 @@ const Home = ({ userObj }) => {
     fileInput.current.value = null;
   };
   const fileInput = useRef(); //  useRef() hook
-=======
->>>>>>> Stashed changes
   return (
       <div>
           <form onSubmit={onSubmit}>
@@ -124,17 +89,11 @@ const Home = ({ userObj }) => {
           </form>
           <div>
             {nweets.map((nweet) => (
-<<<<<<< Updated upstream
               <Nweet
                 key={nweet.id}
                 nweetObj={nweet}
                 isOwner={nweet.creatorId === userObj.uid}
               />
-=======
-              <div key={nweet.id}>
-                <h4>{nweet.text}</h4>
-              </div>
->>>>>>> Stashed changes
             ))}
           </div>
       </div>
