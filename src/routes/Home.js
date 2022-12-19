@@ -3,14 +3,14 @@ import { dbService, storageService } from 'fbase';
 import { collection, addDoc, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import { async } from '@firebase/util';
 import Nweet from 'components/Nweet';
-import { ref, uploadString } from "@firebase/storage";
+import { getDownloadURL, ref, uploadString } from "@firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
 
 const Home = ({ userObj }) => {
     const [nweet, setNweet] = useState("");
     const [nweets, setNweets] = useState([]);
-    const [attachment, setAttachment] = useState();
+    const [attachment, setAttachment] = useState("");
     useEffect(() => {
       const q = query(
         collection(dbService, "nweets"),
@@ -26,15 +26,22 @@ const Home = ({ userObj }) => {
     }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
-    const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
-    const response = await uploadString(fileRef, attachment, "data_url");
-    console.log(response);
-    /* await addDoc(collection(dbService, "nweets"), {
+    let attachmentUrl ="";
+    if(attachment !== "") {
+      const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+      const response = await uploadString(attachmentRef, attachment, "data_url");
+      attachmentUrl = await getDownloadURL(response.ref);
+    }
+    const nweetObj = {
       text: nweet,
       createdAt: Date.now(),
       creatorId: userObj.uid,
-    });
-    setNweet(""); */
+      attachmentUrl,
+    };
+    //트윗하기 누르면 nweetObj 형태로 새로운 document 생성하여 nweets 콜렉션에 넣기
+    await addDoc(collection(dbService, "nweets"),nweetObj);
+    setNweet(""); 
+    setAttachment("");
   };
   const onChange = (event) => {
     const { 
@@ -56,8 +63,8 @@ const Home = ({ userObj }) => {
     };
     reader.readAsDataURL(theFile);
   }; 
-  const onClearPhotoAttachment = () => {
-    setAttachment(null);
+  const onClearAttachment = () => {
+    setAttachment("");
     fileInput.current.value = null;
   };
   const fileInput = useRef(); //  useRef() hook
@@ -76,7 +83,7 @@ const Home = ({ userObj }) => {
               {attachment && (
                 <div>
                   <img src={attachment} alt="preview" width="50px" height="50px" />
-                  <button onClick={onClearPhotoAttachment}>Clear</button>
+                  <button onClick={onClearAttachment}>Clear</button>
                 </div>
               )}
           </form>
