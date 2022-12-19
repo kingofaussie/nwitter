@@ -10,6 +10,11 @@ function App() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if(user) {
+        if (user.displayName === null) {
+          user.updateProfile({
+            displayName: "Yerim",
+          });
+        }
         setUserObj({
           displayName: user.displayName,
           uid: user.uid,
@@ -19,7 +24,7 @@ function App() {
         setUserObj(null);
       }
       setInit(true)
-    })
+    });
   }, []);
   const refreshUser = () => {
     const user = authService.currentUser;
