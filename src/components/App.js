@@ -17,7 +17,7 @@ function App() {
           displayName: user.displayName
             ? user.displayName
             : user.uid.slice(0,9),
-          uid: user.uid,
+            uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
         });
       } else { // 로그아웃시 즉시 로그인화면으로 돌려줌
