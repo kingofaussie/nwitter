@@ -6,26 +6,28 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 function App() {
   const [init, setInit] = useState(false);
   const [userObj, setUserObj] = useState(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if(user) {
-        if (user.displayName === null) {
-          user.updateProfile({
-            displayName: "Yerim",
-          });
-        }
+        setIsSignedIn(true);
         setUserObj({
-          displayName: user.displayName,
+          displayName: user.displayName
+            ? user.displayName
+            : user.uid.slice(0,9),
           uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
         });
       } else { // 로그아웃시 즉시 로그인화면으로 돌려줌
+        setIsSignedIn(false);
         setUserObj(null);
       }
-      setInit(true)
+      setInit(true);
     });
   }, []);
+  
   const refreshUser = () => {
     const user = authService.currentUser;
     setUserObj({

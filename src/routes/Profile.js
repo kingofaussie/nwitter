@@ -31,14 +31,16 @@ const Profile = ({ refreshUser, userObj }) => {
     useEffect(() => {
       getMyNweets();
     }, []);
+
     const onSubmit = async (event) => {
       event.preventDefault();
       if(userObj.displayName !== newDisplayName) {
         await updateProfile(authService.currentUser, {displayName: 
         newDisplayName });
         console.log(userObj.updateProfile);
+      }
         refreshUser();
-      } 
+      
     };
     return (
         <>
