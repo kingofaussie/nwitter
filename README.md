@@ -1,6 +1,6 @@
 <div align="center">
     <br />
-##      <a display="block" href="https://kingofaussie.github.io/silencer/">Click here to see Web😄</a>
+      <a display="block" href="https://kingofaussie.github.io/silencer/">Click here to see Web😄</a>
     <br /><br />
   </a>
 </div>
