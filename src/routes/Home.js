@@ -8,6 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 const Home = ({ userObj }) => {
     const [nweets, setNweets] = useState([]);
+
     useEffect(() => {
       const q = query(
         collection(dbService, "nweets"),
@@ -22,7 +23,7 @@ const Home = ({ userObj }) => {
       });
 
       onAuthStateChanged(authService, (user) => {
-        if(user === null) {
+        if (user === null) {
           unSubscribe();
         }
       });
