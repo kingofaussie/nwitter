@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+<div align="center">
+  <a href="http://githubgw.github.io/twitter-clone">
+    <img height="100" src="./previews/twitter_logo.png" />
+    <br />
+    <a display="block" href="http://githubgw.github.io/twitter-clone">http://githubgw.github.io/twitter-clone</a>
+    <br /><br />
+    <img height="700" src="./previews/1.gif" />
+  </a>
+</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Table of contents
 
-## Available Scripts
+- 🔥 [Built with](#built-with)
+- 🌈 [Project](#project)
+- 📑 [Pages](#pages)
+- ⚙ [Features](#features)
+- 📝 [License](#license)
 
-In the project directory, you can run:
+## Built with
 
-### `npm start`
+### Front-end
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `React`
+- `Javascript`
+- `Styled Components`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Back-end
 
-### `npm test`
+- `Firebase`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Deploy
 
-### `npm run build`
+- `GitHub`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Project
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+> 1. 회원가입, 로그인
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 유저는 이메일, 비밀번호를 이용해 회원가입을 할 수 있습니다.
+- 기존의 구글 또는 깃허브 계정을 이용해 소셜 로그인을 할 수 있습니다.
+- 가입한 계정 정보는 파이어베이스의 `Authentication`에 저장됩니다.
+  <br /><br />
+  <img height="700" src="./previews/2.gif" />
 
-### `npm run eject`
+> 2. 이메일 변경, 비밀번호 변경
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- 유저는 현재 사용 중인 이메일을 새롭게 변경할 수 있습니다.
+- 새로운 이메일 주소로 변경할 때, 기존 이메일을 통해 인증받아서 변경할 수 있습니다.
+- 유저는 현재 사용 중인 비밀번호를 새롭게 변경할 수 있습니다.
+  <br /><br />
+  <img height="700" src="./previews/3.gif" />
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> 3. 유저 프로필, 전체 트윗 확인
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- 유저는 프로필 페이지에서 가입한 이메일 주소와 인증 여부, 계정 생성일, 마지막 로그인 날짜 등을 확인할 수 있습니다.
+- 유저는 자신이 작성한 전체 트윗 리스트를 확인할 수 있습니다.
+  <br /><br />
+  <img height="700" src="./previews/4.gif" />
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+> 4. 프로필 수정 및 프로필 사진 업로드
 
-## Learn More
+- 유저는 프로필 페이지에서 유저 이름을 변경하고, 프로필 사진을 업로드할 수 있습니다.
+- 업로드한 사진은 파이어베이스의 `Storage`에 저장됩니다.
+  <br /><br />
+  <img height="700" src="./previews/5.gif" />
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> 5. 트윗 생성, 트윗 수정, 트윗 삭제
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- 유저는 텍스트, 이미지 등을 넣어 트윗을 생성할 수 있습니다.
+- 생성된 트윗은 유저 정보와 트윗 정보를 포함해서 파이어베이스의 `Firestore Database`에 저장됩니다.
+- 유저는 자신이 작성한 트윗을 수정 및 삭제할 수 있습니다.
+  <br /><br />
+  <img height="700" src="./previews/6.gif" />
 
-### Code Splitting
+> 6. 좋아요, 좋아요 취소
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- 유저는 모든 트윗에 좋아요 또는 좋아요 취소를 할 수 있습니다.
+- 좋아요를 누르게 되면 파이어베이스의 `Firestore Database`에 저장되며, 실시간으로 좋아요 갯수를 업데이트합니다.
+  <br /><br />
+  <img height="700" src="./previews/7.gif" />
 
-### Analyzing the Bundle Size
+> 7. 전체 트윗 수, 다른 유저가 작성한 전체 트윗 확인
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- 홈에서 현재 작성된 전체 트윗 수를 확인할 수 있습니다.
+- 유저를 클릭해 다른 유저가 작성한 전체 트윗을 확인할 수 있습니다.
+  <br /><br />
+  <img height="700" src="./previews/8.gif" />
 
-### Making a Progressive Web App
+> 8. 플래시 메세지
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- 유저가 회원가입, 로그인, 트윗, 프로필 업데이트 등의 동작을 실행할 때, 화면 오른쪽 상단에 작은 플래시 메세지를 보여줍니다.
+- 플래시 메세지는 alert와 다르게 클릭하지 않아도 일정 시간이 지나면 자동으로 사라집니다.
+  <br /><br />
+  <img height="700" src="./previews/9.gif" />
 
-### Advanced Configuration
+> 9. 기타
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- 2021년 9월 노마드코더에서 진행했던 트위터 클론 컨테스트에서 대상에 선정되어 애플워치를 받았습니다.
+  <br /><br />
+  <img src="./previews/twitter_prize.png" />
 
-### Deployment
+## Pages
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+> Root
 
-### `npm run build` fails to minify
+- 홈
+- 프로필
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Features
+
+### 🙎‍♂️ User
+
+- [x] 회원가입
+- [x] 로그인 / 로그아웃
+- [x] 구글 / 깃허브 로그인
+- [x] 아바타 업로드
+- [x] 프로필 수정
+- [x] 이메일 변경
+- [x] 비밀번호 변경
+
+### 🧑‍💻 Tweet
+
+- [x] 트윗 생성
+- [x] 트윗 수정
+- [x] 트윗 삭제
+- [x] 트윗 확인
+- [x] 좋아요, 좋아요 취소
+
+## License
+
+MIT
