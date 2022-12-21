@@ -7,11 +7,11 @@
 
 ## Table of contents
 
-- 🔥 [Built with](#built-with)
-- 🌈 [Project](#project)
-- 📑 [Pages](#pages)
-- ⚙ [Features](#features)
-- 📝 [License](#license)
+- 💛 [Built with](#built-with)
+- 🧡 [Project](#project)
+- 💚 [Pages](#pages)
+- 💜 [Features](#features)
+
 
 ## Built with
 
