@@ -3,6 +3,8 @@ import { dbService, storageService } from "fbase";
 import { doc, updateDoc, deleteDoc} from "firebase/firestore"
 import { deleteObject, ref } from 'firebase/storage';
 import ImgModal from './ImgModal';
+import classNames from 'classnames';
+import styles from "./Nweet.module.scss";
 
 const Nweet = ({ nweetObj, isOwner }) => {
   // 이미지 모달
@@ -35,7 +37,7 @@ const Nweet = ({ nweetObj, isOwner }) => {
     setNewNweet(value);
    };
   return (
-    <div>
+    <div className={styles.container}>
       { modalActive !== false && (
         <ImgModal
           photoURL={
