@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { dbService, storageService } from "fbase";
 import { doc, updateDoc, deleteDoc} from "firebase/firestore"
 import { deleteObject, ref } from 'firebase/storage';
+import ImgModal from './ImgModal';
 
 const Nweet = ({ nweetObj, isOwner }) => {
+  // 이미지 모달
+  const [modalActive, setModalActive] = useState(false);
+  // 수정 모드 토글
   const [editing, setEditing] = useState(false);
   const [newNweet, setNewNweet] = useState(nweetObj.text);
+  // 글 삭제
   const NweetTextRef = doc(dbService,"nweets",`${nweetObj.id}`);
   const onDeleteClick = async () => {
     const ok = window.confirm("Are you sure you want to delete this nweet?");
@@ -31,8 +36,14 @@ const Nweet = ({ nweetObj, isOwner }) => {
    };
   return (
     <div>
-      {
-        editing ? (
+      { modalActive !== false && (
+        <ImgModal
+          photoURL={
+            modalActive === "post" ? nweetObj.attachmentUrl : nweetObj.profileImg
+          }
+          setModalActive={setModalActive}
+      />)}
+        {editing ? (
             <>
               {isOwner && ( 
                   <>
@@ -51,10 +62,20 @@ const Nweet = ({ nweetObj, isOwner }) => {
                 )}
             </> 
           ) : (
-          <>
-            <h4>{nweetObj.text}</h4>
+          <div>
+            <h1>{nweetObj.text}</h1>          
             {nweetObj.attachmentUrl && (
-              <img src={nweetObj.attachmentUrl} width="50px" height="50px" />
+              <div>
+                <img 
+                    src={nweetObj.attachmentUrl} 
+                    alt={nweetObj.attachmentUrl}
+                    width="50px" 
+                    height="50px"
+                    onClick={() => {
+                      setModalActive("post");
+                    }}
+                  />
+              </div>
             )}
             {isOwner && (
                 <>
@@ -62,10 +83,12 @@ const Nweet = ({ nweetObj, isOwner }) => {
                   <button onClick={toggleEditing}>Edit Nweet</button>
                 </>
             )}
-          </>
+          </div>
         )}
     </div>
   );
 };
 
 export default Nweet;
+
+// <h1>{nweetObj.text}</h1> => 포스팅한글
