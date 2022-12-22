@@ -12,12 +12,9 @@ const Navigation = ({ userObj }) => (
             <li>
               {userObj && (
                 <Link to='/profile'>
-                  <span>
-                    {userObj.displayName}의 Profile
-                  </span>
-                  <span>
-                    <img src={userObj.photoURL} alt="Profile 위" />
-                  </span>
+                  
+                  <span>{userObj.displayName}의 Profile</span>
+                  <img src={userObj.photoURL} alt="Profile 위" />
                 </Link>
               )}
             </li>
