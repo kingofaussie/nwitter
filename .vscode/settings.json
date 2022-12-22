@@ -1,8 +1,16 @@
 {
-  
-    "files.autoSave": "onFocusChange",
-    "editor.tabSize": 2,
-    "editor.fontFamily": "D2Coding",
-    "editor.fontSize": 14,
+    "workbench.colorTheme": "Material Theme Darker",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "editor.formatOnSave": true,
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single",
+    "explorer.confirmDragAndDrop": false,
+    "json.schemas": [
     
+    ]
+    "editor.tokenColorCustomizations": {
+
+        "comments": "#ffc2c2"
+
+    },
 }
