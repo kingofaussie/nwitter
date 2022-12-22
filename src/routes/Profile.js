@@ -13,7 +13,7 @@ import styles from "./Profile.module.scss";
 const Profile = ({ refreshUser, userObj }) => {
     const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
     const [proImg, setProImg] = useState("");
-    const [uploading, setUploading] = useState(false);
+    const [myNs, setMyNs] = useState([]);
     const navigate = useNavigate();
     
     // 내 게시글만 불러오기
@@ -56,12 +56,38 @@ const Profile = ({ refreshUser, userObj }) => {
     };
 
     // 프로필 닉네임 변경
-    const onchange = (event) => {
+    const onChange = (event) => {
       const {
         target: { value },
       } = event;
       setNewDisplayName(value);
     }
+
+    // 닉네임 변경시
+    const onSubmit = async (event) => {
+      event.preventDefault();
+      if (!authService.currentUser) {
+        return;
+      }
+
+      // if (newDisplayName !== "") {
+      //   myNs.forEach((meb) => {
+      //     if (meb.displayName !== newDisplayName) {
+      //       dbService
+      //         .doc(`mebs/${meb.id}`)
+      //         .update("displayName", newDisplayName);
+      //     }
+      //   });
+      // }
+
+      if(userObj.displayName !== newDisplayName) {
+        await updateProfile(authService.currentUser, {
+        displayName: newDisplayName,
+        });
+      }
+      setNewDisplayName('');
+      refreshUser();
+      };
 
     // 프로필 사진 첨부
     const onProImgChange = (event) => {
@@ -81,7 +107,9 @@ const Profile = ({ refreshUser, userObj }) => {
       };
 
       reader.readAsDataURL(file);
-    }
+    };
+
+    // 프로필 이미지 변경시
     const onSubmitImg = async (event) => {
       event.preventDefault();
       let newProfileImgUrl = "";
@@ -90,38 +118,26 @@ const Profile = ({ refreshUser, userObj }) => {
         return;
       }
 
-      // 프로필 이미지 변경시
       if(proImg !== '') {
         const storage = getStorage(app);
         const storageRef = ref(storage, `${userObj.uid}/${uuidv4()}`);
-        const response = await uploadString(storageRef, proImg, 'data_url');
+        const response = await uploadString(storageRef,proImg,'data_url');
         newProfileImgUrl = await getDownloadURL(ref(storage, response.ref));
       }
       await updateProfile(authService.currentUser, {
-        photoURL: newProfileImgUrl,
+          photoURL: 
+            newProfileImgUrl !== "" ? newProfileImgUrl : userObj.photoURL,
       });
       setProImg('');
       refreshUser();
     }
-    const onSubmit = async (event) => {
-      event.preventDefault();
-      if (!authService.currentUser) {
-        return;
-      }
-      // 닉네임 변경시
-      if(userObj.displayName !== newDisplayName) {
-        await updateProfile(authService.currentUser, {
-        displayName: newDisplayName,
-        });
-      }
-      setNewDisplayName('');
-      refreshUser();
-      };
     
+
+      console.log(userObj.photoURL);
     return (
         <div>
           <div>
-            <img src={proImg ? proImg : userObj.photoURL} alt="Profile" />
+            <img src={proImg ? proImg : userObj.photoURL} alt="Profileㅇㄴ" />
           </div>
           <form onSubmit={onSubmitImg}>
             <div>
@@ -136,6 +152,7 @@ const Profile = ({ refreshUser, userObj }) => {
                   style={{ display: "none" }}
                 />
             </div>
+            <input type="submit" value="Update Profile" />
           </form>
 
           <form onSubmit={onSubmit}>
@@ -150,14 +167,14 @@ const Profile = ({ refreshUser, userObj }) => {
                 닉네임
               </label>
             <input 
-              onChange={onchange}
+              onChange={onChange}
               type="text" 
               placeholder='Display name' 
               value={newDisplayName}
             />
             </div>
             <input type="submit" value="Update Profile" />
-            
+
           </form>
             <button onClick={onDeleteClick}>탈퇴하기</button>
             <button onClick={onLogOutClick}>로그아웃</button>

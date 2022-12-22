@@ -16,7 +16,7 @@ const Navigation = ({ userObj }) => (
                     {userObj.displayName}의 Profile
                   </span>
                   <span>
-                    <img src={userObj.photoURL} alt="Profile" />
+                    <img src={userObj.photoURL} alt="Profile 위" />
                   </span>
                 </Link>
               )}
