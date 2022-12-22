@@ -71,8 +71,6 @@ const Nweet = ({ nweetObj, isOwner }) => {
                 <img 
                     src={nweetObj.attachmentUrl} 
                     alt={nweetObj.attachmentUrl}
-                    width="50px" 
-                    height="50px"
                     onClick={() => {
                       setModalActive("post");
                     }}

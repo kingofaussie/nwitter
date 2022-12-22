@@ -7,4 +7,32 @@
   left: 0;
   right: 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: contrast(40%); // 모달 팝업 후 모달제외 색깔
+  min-width: 100vw;
+  min-height: 100vh;
+
+  .modal {
+    background-color: black;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: {
+      top: 5px;
+      bottom: 5px;
+      left: 5px;
+      right: 5px;
+    }
+  }
+
+  img {
+    max-width: 70vw;
+    max-height: 70vh;
+    border-radius: 15px;
+    
+  }
 }
+
+
