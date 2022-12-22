@@ -1,14 +1,19 @@
-import { authService, dbService } from 'fbase';
+import app, { authService, dbService, } from 'fbase';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import classNames from 'classnames';
+import defaultProfileImg from '../images/defaultProfileImg.png';
+import { v4 as uuidv4 } from 'uuid';
+import { getDownloadURL, ref, uploadString, getStorage } from 'firebase/storage';
+import styles from "./Profile.module.scss";
 
 
 const Profile = ({ refreshUser, userObj }) => {
     const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
     const [proImg, setProImg] = useState("");
+    const [uploading, setUploading] = useState(false);
     const navigate = useNavigate();
     
     // 내 게시글만 불러오기
@@ -77,31 +82,86 @@ const Profile = ({ refreshUser, userObj }) => {
 
       reader.readAsDataURL(file);
     }
+    const onSubmitImg = async (event) => {
+      event.preventDefault();
+      let newProfileImgUrl = "";
 
+      if (!authService.currentUser) {
+        return;
+      }
+
+      // 프로필 이미지 변경시
+      if(proImg !== '') {
+        const storage = getStorage(app);
+        const storageRef = ref(storage, `${userObj.uid}/${uuidv4()}`);
+        const response = await uploadString(storageRef, proImg, 'data_url');
+        newProfileImgUrl = await getDownloadURL(ref(storage, response.ref));
+      }
+      await updateProfile(authService.currentUser, {
+        photoURL: newProfileImgUrl,
+      });
+      setProImg('');
+      refreshUser();
+    }
     const onSubmit = async (event) => {
       event.preventDefault();
-      if(userObj.displayName !== newDisplayName) {
-        await updateProfile(authService.currentUser, {displayName: 
-        newDisplayName });
-        console.log(userObj.updateProfile);
+      if (!authService.currentUser) {
+        return;
       }
-        refreshUser();
-      
-    };
+      // 닉네임 변경시
+      if(userObj.displayName !== newDisplayName) {
+        await updateProfile(authService.currentUser, {
+        displayName: newDisplayName,
+        });
+      }
+      setNewDisplayName('');
+      refreshUser();
+      };
+    
     return (
-        <>
-        <form onSubmit={onSubmit}>
-          <input 
-            onChange={onchange}
-            type="text" 
-            placeholder='Display name' 
-            value={newDisplayName}
-          />
-          <input type="submit" value="Update Profile" />
-        </form>
-          <button onClick={onDeleteClick}>탈퇴하기</button>
-          <button onClick={onLogOutClick}>로그아웃</button>
-        </>
+        <div>
+          <div>
+            <img src={proImg ? proImg : userObj.photoURL} alt="Profile" />
+          </div>
+          <form onSubmit={onSubmitImg}>
+            <div>
+                <label htmlFor="profileImg" className={styles["input--img"]}>
+                  사진 변경
+                </label>
+                <input
+                  id="profileImg"
+                  onChange={onProImgChange}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                />
+            </div>
+          </form>
+
+          <form onSubmit={onSubmit}>
+            <div>
+              <label
+                htmlFor="displayName"
+                className={classNames(
+                  styles["input--name__label"],
+                  styles["edit__label"]
+                )}
+              >
+                닉네임
+              </label>
+            <input 
+              onChange={onchange}
+              type="text" 
+              placeholder='Display name' 
+              value={newDisplayName}
+            />
+            </div>
+            <input type="submit" value="Update Profile" />
+            
+          </form>
+            <button onClick={onDeleteClick}>탈퇴하기</button>
+            <button onClick={onLogOutClick}>로그아웃</button>
+        </div>
     );
 };
 
