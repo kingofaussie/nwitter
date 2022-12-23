@@ -1,54 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import AppRouter from 'components/Router';
+import React, { useEffect, useState } from "react";
+import AppRouter from "components/Router";
 import { authService } from "fbase";
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function App() {
   const [init, setInit] = useState(false);
   const [userObj, setUserObj] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  
+
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      if(user) {
+      if (user) {
         setIsSignedIn(true);
         setUserObj({
           displayName: user.displayName
             ? user.displayName
-            : user.uid.slice(0,9),
-            uid: user.uid,
+            : user.uid.slice(0, 9),
+          uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
+          photoURL: user.photoURL
+            ? user.photoURL
+            : "https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800",
         });
-      } else { // 로그아웃시 즉시 로그인화면으로 돌려줌
+      } else {
+        // 로그아웃시 즉시 로그인화면으로 돌려줌
         setIsSignedIn(false);
         setUserObj(null);
       }
       setInit(true);
     });
   }, []);
-  
+
   const refreshUser = () => {
     const user = authService.currentUser;
     setUserObj({
       displayName: user.displayName,
       uid: user.uid,
       updateProfile: (args) => user.updateProfile(args),
+      photoURL: user.photoURL,
     });
-  }
+  };
   return (
-  <>
-    {init ? (
-      <AppRouter 
-        refreshUser={refreshUser}
-        isLoggedIn={Boolean(userObj)} 
-        userObj={userObj}
-      />
-    ) : (
-      'Initailizing…'
+    <>
+      {init ? (
+        <AppRouter
+          refreshUser={refreshUser}
+          isLoggedIn={Boolean(userObj)}
+          userObj={userObj}
+        />
+      ) : (
+        "Initailizing…"
       )}
-   
-  </>
+      <footer>
+        &copy; {new Date().getFullYear()}. Spit-Out All Rights Reserved.
+      </footer>
+    </>
   );
 }
 

@@ -1,24 +1,29 @@
 import classNames from "classnames";
+import { authService } from "fbase";
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Navigation.module.scss";
 
 const Navigation = ({ userObj }) => (
-    <nav>
-        <ul>
-            <li>
-                <Link to='/'>Home</Link>
-            </li>
-            <li>
-              {userObj && (
-                <Link to='/profile'>
-                  
-                  <span>{userObj.displayName}의 Profile</span>
-                  <img src={userObj.photoURL} alt="Profile 위" />
-                </Link>
-              )}
-            </li>
-        </ul>
-    </nav>
+  <nav>
+    <ul>
+      <li>
+        <Link to='/'>Home</Link>
+      </li>
+      <li>
+        {userObj && (
+          <Link to='/profile'>
+            <span>{userObj.displayName}의 Profile</span>
+            <img
+              src={userObj.photoURL}
+              width='50'
+              height='50'
+              alt='Profile 위'
+            />
+          </Link>
+        )}
+      </li>
+    </ul>
+  </nav>
 );
 export default Navigation;
