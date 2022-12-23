@@ -16,7 +16,7 @@ function App() {
         setUserObj({
           displayName: user.displayName
             ? user.displayName
-            : user.uid.slice(0, 9),
+            : "무명",
           uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
           photoURL: user.photoURL

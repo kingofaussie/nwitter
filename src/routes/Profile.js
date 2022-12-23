@@ -1,7 +1,7 @@
 import app, { authService, dbService, storageService } from "fbase";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import classNames from "classnames";
 import defaultProfileImg from "images/defaultProfileImg.jpg";
@@ -18,10 +18,10 @@ import Nweet from "components/Nweet";
 const Profile = ({ refreshUser, userObj }) => {
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
   const [attachment, setAttachment] = useState("");
+  const [newDisplayProfile, setNewDisplayProfile] = useState("");
   const [myNs, setMyNs] = useState([]);
   const [doUpdate, setDoUpdate] = useState(0);
   const [uploading, setUploading] = useState(false);
-  const [alert, setAlert] = useState("");
 
   const navigate = useNavigate();
 
@@ -81,70 +81,50 @@ const Profile = ({ refreshUser, userObj }) => {
       return;
     }
 
-    if (userObj.displayName !== newDisplayName || attachment !== "") {
-      let newProfileImgUrl = "";
-
+    const q = query(
+      collection(dbService, "nweets"),
+      where("creatorId", "==", userObj.uid)
+    );
+    const querySnapshot = await getDocs(q);
       // 변경중에는 버튼이 비활성화되도록 useState 리액트 훅을 이용함.
       setUploading(true);
 
-      // 닉네임 변경사항이 있을 경우
-      if (newDisplayName !== "") {
-        myNs.forEach((nweet) => {
-          if (nweet.displayName !== newDisplayName) {
-            dbService
-              .doc(`nweets/${nweet.id}`)
-              .update("displayName", newDisplayName);
-          }
+      // 닉네임 
+      if(userObj.displayName !== newDisplayName) {
+        await updateProfile(authService.currentUser, { displayName: newDisplayName });
+
+        querySnapshot.forEach((document) => {
+          updateDoc(doc(dbService, `nweets/${document.id}`), {
+            displayName: newDisplayName,
+          });
         });
       }
+      // 프사
+      let attachmentUrl = "";
+      if (newDisplayProfile !== ""){
+        const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+        const uploadFile = await uploadString(
+          fileRef,
+          newDisplayProfile,
+          "data_url"
+        );
+        attachmentUrl = await getDownloadURL(uploadFile.ref);
 
-      //프사 변경사항
-      if (attachment !== "") {
-        if (userObj.photoURL !== defaultProfileImg) {
-          await storageService
-            .refFromURL(userObj.photoURL)
-            .delete()
-            .catch((error) => {
-              console.log(error.message);
-            });
-        }
-        const storage = getStorage(app);
+        await updateProfile(authService.currentUser, { photoURL: attachmentUrl });
 
-        const storageRef = ref(storage, `${userObj.uid}/${uuidv4()}`);
-
-        const response = await uploadString(storageRef, attachment, "data_url");
-
-        newProfileImgUrl = await getDownloadURL(ref(storage, response.ref));
-
-        // 작성한 모든글의 프사 변경
-
-        myNs.forEach((nweet) => {
-          if (nweet.profileImg !== newProfileImgUrl) {
-            dbService
-              .doc(`nweets/${nweet.id}`)
-              .update("profileImg", newProfileImgUrl);
-          }
+        querySnapshot.forEach((document) => {
+          updateDoc(doc(dbService, `nweets/${document.id}`), {
+            displayProfile: attachmentUrl,
+          });
         });
       }
-
-      // 반영
-      await userObj
-        .updateProfile(authService.currentUser, {
-          photoURL:
-            newProfileImgUrl !== "" ? newProfileImgUrl : userObj.photoURL,
-          displayName:
-            newDisplayName !== "" ? newDisplayName : userObj.displayName,
-        })
-        .setUploading(false);
-
-      // 리프레시
+      fileInput.current.value = "";
+      setNewDisplayProfile("");
       refreshUser();
-      setDoUpdate((prev) => prev + 1);
-    }
-  };
+    };
 
   // 프로필 사진 첨부
-  const onProImgChange = (event) => {
+  const onFileChange = (event) => {
     const {
       target: { files },
     } = event;
@@ -153,67 +133,101 @@ const Profile = ({ refreshUser, userObj }) => {
 
     const reader = new FileReader();
 
-    reader.onloadend = (event) => {
+    reader.onloadend = (finishedEvent) => {
       const {
         target: { result },
-      } = event;
+      } = finishedEvent;
+      setNewDisplayProfile(result);
       setAttachment(result);
     };
-
     reader.readAsDataURL(file);
   };
 
+  // 게시글 당 프로필사진 
+  const onClearAttachment = () => {
+    fileInput.current.value = "";
+    setAttachment("");
+    setNewDisplayProfile("");
+  };
+  const fileInput = useRef();
+
   return (
     <div>
-      <div>
-        <img src={attachment ? attachment : userObj.photoURL} alt='Profile' />
-      </div>
-      <form onSubmit={onSubmit}>
         <div>
-          <label htmlFor='profileImg' className={styles["input--img"]}>
-            사진 변경
-          </label>
-          <input
-            id='profileImg'
-            onChange={onProImgChange}
-            type='file'
-            accept='image/*'
-            style={{ display: "none" }}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor='displayName'
-            className={classNames(
-              styles["input--name__label"],
-              styles["edit__label"]
+          <form onSubmit={onSubmit}>
+            {authService.currentUser.photoURL ? (
+              newDisplayProfile ? (
+                <label
+                  htmlFor='attach-file'
+                >
+                  <img src={newDisplayProfile} />
+                </label>
+              ) : (
+                <label
+                  htmlFor="attach-file"
+                >
+                  <div></div>
+                  <img 
+                    src={authService.currentUser.photoURL}
+                    alt="currentPhoto"
+                  />
+                </label>
+              )
+            ) : newDisplayProfile ? (
+              <label 
+                htmlFor="attach-file"
+              >
+                <div>
+                  <img
+                    src={newDisplayProfile}
+                    alt="newPhoto"
+                  />
+                </div>
+              </label>
+            ) : (
+              <label 
+                htmlFor="attach-file"
+              >
+                <i></i>
+              </label>
             )}
-          >
-            닉네임
-          </label>
+
           <input
-            id='displayName'
-            onChange={onChange}
-            type='text'
-            placeholder='Display name'
-            value={newDisplayName}
-          />
-        </div>
-        <div>
-          <input
-            id='submit'
-            type='submit'
-            value='프로필 업데이트'
-            style={{ display: uploading ? "none" : "inline" }}
+            id="attach-file"
+            type="file"
+            accept="image/*"
+            onChange={onFileChange}
+            style={{
+              opacity: 0,
+              height: 0,
+            }}
+            ref={fileInput}
+            name="newDisplayProfile"
           />
 
-          <div>{alert}</div>
-        </div>
-      </form>
+          <input
+            onChange={onChange}
+            type="text"
+            autoFocus
+            placeholder="Display Name"
+            value={newDisplayName}
+            className="formInput profile"
+            maxLength={30}
+          />
+          <input
+            type="submit"
+            value="Update Profile"
+            className="formBtn profile"
+            style={{
+              marginTop: 10,
+            }}
+          />
+        </form>
       <button onClick={onDeleteClick}>탈퇴하기</button>
       <button onClick={onLogOutClick}>로그아웃</button>
     </div>
+    </div>
   );
-};
+        };
 
 export default Profile;
