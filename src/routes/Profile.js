@@ -1,16 +1,14 @@
 import app, { authService, dbService, storageService } from "fbase";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import classNames from "classnames";
-import defaultProfileImg from "images/defaultProfileImg.jpg";
 import { v4 as uuidv4 } from "uuid";
 import {
   getDownloadURL,
   ref,
   uploadString,
-  getStorage,
 } from "firebase/storage";
 import styles from "./Profile.module.scss";
 import Nweet from "components/Nweet";
@@ -19,18 +17,16 @@ const Profile = ({ refreshUser, userObj }) => {
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
   const [attachment, setAttachment] = useState("");
   const [newDisplayProfile, setNewDisplayProfile] = useState("");
-  const [myNs, setMyNs] = useState([]);
   const [doUpdate, setDoUpdate] = useState(0);
-  const [uploading, setUploading] = useState(false);
 
   const navigate = useNavigate();
 
   // 내 게시글만 불러오기
   const getMyNweets = async () => {
-    const q = query(
+    const q = query( // 원하는 조건으로 데이터를 가져올수있음.
       collection(dbService, "nweets"),
-      where("creatorId", "==", userObj.uid),
-      orderBy("createdAt", "desc")
+      where("creatorId", "==", userObj.uid), // 조건에 부합하는 글만 가져오도록함.
+      orderBy("createdAt", "desc") // 게시글 순서
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
@@ -86,19 +82,18 @@ const Profile = ({ refreshUser, userObj }) => {
       where("creatorId", "==", userObj.uid)
     );
     const querySnapshot = await getDocs(q);
-      // 변경중에는 버튼이 비활성화되도록 useState 리액트 훅을 이용함.
-      setUploading(true);
 
-      // 닉네임 
-      if(userObj.displayName !== newDisplayName) {
-        await updateProfile(authService.currentUser, { displayName: newDisplayName });
 
-        querySnapshot.forEach((document) => {
-          updateDoc(doc(dbService, `nweets/${document.id}`), {
-            displayName: newDisplayName,
-          });
+    // 닉네임 
+    if(userObj.displayName !== newDisplayName) {
+      await updateProfile(authService.currentUser, { displayName: newDisplayName });
+
+      querySnapshot.forEach((document) => {
+        updateDoc(doc(dbService, `nweets/${document.id}`), {
+          displayName: newDisplayName,
         });
-      }
+      });
+    }
       // 프사
       let attachmentUrl = "";
       if (newDisplayProfile !== ""){
@@ -143,7 +138,7 @@ const Profile = ({ refreshUser, userObj }) => {
     reader.readAsDataURL(file);
   };
 
-  // 게시글 당 프로필사진 
+  // 게시글마다 프로필
   const onClearAttachment = () => {
     fileInput.current.value = "";
     setAttachment("");
@@ -156,6 +151,7 @@ const Profile = ({ refreshUser, userObj }) => {
         <div>
           <form onSubmit={onSubmit}>
             {authService.currentUser.photoURL ? (
+              // 기본 전제가 프로필 사진이 있는 조건 하에
               newDisplayProfile ? (
                 <label
                   htmlFor='attach-file'
@@ -173,7 +169,9 @@ const Profile = ({ refreshUser, userObj }) => {
                   />
                 </label>
               )
-            ) : newDisplayProfile ? (
+            ) : 
+            // 기본 전제가 프로필 사진이 없다. (거짓일 경우 내가 지정해둔 로니콜먼 사진이 기본프로필이됨.)
+            newDisplayProfile ? (
               <label 
                 htmlFor="attach-file"
               >
@@ -188,46 +186,50 @@ const Profile = ({ refreshUser, userObj }) => {
               <label 
                 htmlFor="attach-file"
               >
-                <i></i>
+                <div>
+                  <img
+                    src='https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800'
+                    alt='noPhoto'
+                  />
+                </div>
               </label>
             )}
 
-          <input
-            id="attach-file"
-            type="file"
-            accept="image/*"
-            onChange={onFileChange}
-            style={{
-              opacity: 0,
-              height: 0,
-            }}
-            ref={fileInput}
-            name="newDisplayProfile"
-          />
-
-          <input
-            onChange={onChange}
-            type="text"
-            autoFocus
-            placeholder="Display Name"
-            value={newDisplayName}
-            className="formInput profile"
-            maxLength={30}
-          />
-          <input
-            type="submit"
-            value="Update Profile"
-            className="formBtn profile"
-            style={{
-              marginTop: 10,
-            }}
-          />
-        </form>
-      <button onClick={onDeleteClick}>탈퇴하기</button>
-      <button onClick={onLogOutClick}>로그아웃</button>
-    </div>
+            <input
+              id="attach-file"
+              type="file"
+              accept="image/*"
+              onChange={onFileChange}
+              style={{
+                opacity: 0,
+                height: 0,
+              }}
+              ref={fileInput}
+              name="newDisplayProfile"
+            />
+            <input
+              onChange={onChange}
+              type="text"
+              autoFocus
+              placeholder="Display Name"
+              value={newDisplayName}
+              className="formInput profile"
+              maxLength={30}
+            />
+            <input
+              type="submit"
+              value="Update Profile"
+              className="formBtn profile"
+              style={{
+                marginTop: 10,
+              }}
+            />
+          </form>
+          <button onClick={onDeleteClick}>탈퇴하기</button>
+          <button onClick={onLogOutClick}>로그아웃</button>
+        </div>
     </div>
   );
-        };
+};
 
 export default Profile;

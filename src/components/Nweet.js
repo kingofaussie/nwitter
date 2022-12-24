@@ -3,17 +3,19 @@ import { dbService, storageService } from "fbase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import ImgModal from "./ImgModal";
-import classNames from "classnames";
 import styles from "./Nweet.module.scss";
 
-const Nweet = ({ nweetObj, isOwner, userObj, setDoUpdate }) => {
-  // 이미지 모달
-  const [modalActive, setModalActive] = useState(false);
+
+const Nweet = ({ nweetObj, isOwner, }) => {
   // 수정 모드 토글
   const [editing, setEditing] = useState(false);
   const [newNweet, setNewNweet] = useState(nweetObj.text);
+  // 이미지 모달
+  const [modalActive, setModalActive] = useState(false);
+
   // 글 삭제
   const NweetTextRef = doc(dbService, "nweets", `${nweetObj.id}`);
+
   const onDeleteClick = async () => {
     const ok = window.confirm("Are you sure you want to delete this nweet?");
     if (ok) {
@@ -22,6 +24,7 @@ const Nweet = ({ nweetObj, isOwner, userObj, setDoUpdate }) => {
       await deleteObject(ref(storageService, nweetObj.attachmentUrl));
     }
   };
+
   const toggleEditing = () => setEditing((prev) => !prev);
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -30,6 +33,7 @@ const Nweet = ({ nweetObj, isOwner, userObj, setDoUpdate }) => {
     });
     setEditing(false); // edit하고나서 더이상 edit모드 아니도록 하게한다.
   };
+
   const onChange = (event) => {
     const {
       target: { value },
@@ -39,14 +43,14 @@ const Nweet = ({ nweetObj, isOwner, userObj, setDoUpdate }) => {
   return (
     <div className={styles.container}>
       {modalActive !== false && (
-        <ImgModal
-          photoURL={
-            modalActive === "post"
-              ? nweetObj.attachmentUrl
-              : nweetObj.profileImg
-          }
-          setModalActive={setModalActive}
-        />
+          <ImgModal
+            photoURL={
+              modalActive === "post"
+                ? nweetObj.attachmentUrl
+                : nweetObj.displayProfile
+            }
+            setModalActive={setModalActive}
+          />
       )}
       {editing ? (
         <>
@@ -67,8 +71,55 @@ const Nweet = ({ nweetObj, isOwner, userObj, setDoUpdate }) => {
           )}
         </>
       ) : (
-        <div>
-          <h1>{nweetObj.text}</h1>
+        <>
+          <span>
+            {nweetObj.displayProfile ? (
+              <img 
+                src={nweetObj.displayProfile} 
+                onClick={() => {
+                  setModalActive("profile");
+                }}
+              />
+            ) : (
+              <i
+                className='far fa-user-circle fa-3x fa fa-quote-left fa-pull-left fa-border'
+              >
+                
+              </i>
+            )}
+            {/* 자신의 작성 트윗 */}
+            <span>{`${nweetObj.displayName}`}</span>
+          </span>
+          <div>{nweetObj.text}</div>
+          {nweetObj.attachmentUrl && (
+            <>
+              <img
+                src={nweetObj.attachmentUrl}
+                onClick={() => {
+                  setModalActive("post");
+                }}
+               />
+            </>
+          )}
+         
+            {isOwner && (
+            <>
+              <button onClick={onDeleteClick}>Delete Nweet</button>
+              <button onClick={toggleEditing}>Edit Nweet</button>
+            </>
+            )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Nweet;
+
+// <h1>{nweetObj.text}</h1> => 포스팅한글
+
+
+          {/* <h1>{nweetObj.text}</h1>
           {nweetObj.attachmentUrl && (
             <div>
               <img
@@ -85,13 +136,4 @@ const Nweet = ({ nweetObj, isOwner, userObj, setDoUpdate }) => {
               <button onClick={onDeleteClick}>Delete Nweet</button>
               <button onClick={toggleEditing}>Edit Nweet</button>
             </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Nweet;
-
-// <h1>{nweetObj.text}</h1> => 포스팅한글
+          )} */}
