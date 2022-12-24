@@ -1,0 +1,38 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: {
+        bottom: 10px;
+    }
+    .input-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 320px;
+        padding: {
+            bottom: 40px;
+        }
+    }
+    .input--text {
+        overflow: visible;
+        resize: none;
+        outline: none;
+        border-radius: 30px;
+        width: 90vw;
+        max-width: 625px;
+        min-width: 230px;
+        height: 52px;
+        border: 1px solid #221718;
+        font-size: 16px;
+        line-height: 20px;
+        transform: translateY(45px);
+        box-shadow: 3px 3px 1px gray;
+        padding: {
+            top: 15px;
+            left: 20px;
+            right: 110px;
+            bottom: 15px;
+        }
+    }
+}

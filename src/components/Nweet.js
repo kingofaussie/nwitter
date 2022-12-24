@@ -4,7 +4,8 @@ import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import ImgModal from "./ImgModal";
 import styles from "./Nweet.module.scss";
-
+import classNames from "classnames";
+// 클래스네임 중복 참고 https://ji-u.tistory.com/16
 
 const Nweet = ({ nweetObj, isOwner, }) => {
   // 수정 모드 토글
@@ -47,7 +48,8 @@ const Nweet = ({ nweetObj, isOwner, }) => {
             photoURL={
               modalActive === "post"
                 ? nweetObj.attachmentUrl
-                : nweetObj.displayProfile
+                : (nweetObj.displayProfile ? nweetObj.displayProfile : 
+                  'https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800')
             }
             setModalActive={setModalActive}
           />
@@ -71,7 +73,8 @@ const Nweet = ({ nweetObj, isOwner, }) => {
           )}
         </>
       ) : (
-        <>
+        <div className={classNames(styles["nweet-box"])}>
+          <div className={styles["nweet-box__user"]}>
           <span>
             {nweetObj.displayProfile ? (
               <img 
@@ -81,34 +84,48 @@ const Nweet = ({ nweetObj, isOwner, }) => {
                 }}
               />
             ) : (
-              <i
-                className='far fa-user-circle fa-3x fa fa-quote-left fa-pull-left fa-border'
-              >
-                
-              </i>
+              <div className={styles["profile-img"]}>
+                <img 
+                  src= 'https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800'
+                  onClick={() => {
+                    setModalActive("profile");
+                  }}  
+                />
+              </div>
             )}
-            {/* 자신의 작성 트윗 */}
             <span>{`${nweetObj.displayName}`}</span>
           </span>
+          </div>
+          {/* 자신의 작성 트윗 */}  
           <div>{nweetObj.text}</div>
           {nweetObj.attachmentUrl && (
-            <>
+            <div className={styles["nweet-box__img"]}>
               <img
                 src={nweetObj.attachmentUrl}
                 onClick={() => {
                   setModalActive("post");
                 }}
                />
-            </>
+            </div>
           )}
-         
+          <div className={styles["btn-wrapper"]}>
             {isOwner && (
             <>
-              <button onClick={onDeleteClick}>Delete Nweet</button>
-              <button onClick={toggleEditing}>Edit Nweet</button>
+              <button 
+                onClick={onDeleteClick}
+                className={classNames(styles["btn--delete"], styles.btn)}
+              >Delete Nweet
+              </button>
+
+              <button 
+                onClick={toggleEditing}
+                className={classNames(styles["btn--edit"], styles.btn)}
+              >Edit Nweet
+              </button>
             </>
             )}
-        </>
+          </div>
+        </div>
       )}
     </div>
   );

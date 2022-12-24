@@ -1,8 +1,9 @@
 import { dbService, storageService } from "fbase";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import styles from "./NweetFactory.module.scss";
 
 const NweetFactory = ({ userObj }) => {
   const textareaRef = useRef();
@@ -10,8 +11,23 @@ const NweetFactory = ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [attachment, setAttachment] = useState("");
 
+  const resize = useCallback(() => {
+    if(!textareaRef.current) {
+      return;
+    }
+
+    const currentRef = textareaRef.current;
+    currentRef.style.height = "52px";
+    currentRef.style.height = `${currentRef.scrollHeight + 2}px`;
+  }, []);
+
   const onSubmit = async (event) => {
     event.preventDefault();
+
+    if (attachment === "" && nweet === "") {
+      return;
+    }
+
     let attachmentUrl = "";
     if (attachment !== "") {
       const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
@@ -41,6 +57,7 @@ const NweetFactory = ({ userObj }) => {
       target: { value },
     } = event;
     setNweet(value);
+    resize();
   };
 
   const onFileChange = (event) => {
@@ -64,28 +81,40 @@ const NweetFactory = ({ userObj }) => {
   const fileInput = useRef(); //  useRef() hook
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        value={nweet}
-        onChange={onChange}
-        type='text'
-        placeholder="What's on your mind?"
-        maxLength={120}
-      />
-      <input
-        type='file'
-        accept='image/*'
-        onChange={onFileChange}
-        ref={fileInput}
-      />
-      <input type='submit' value='POST' />
-      {attachment && (
-        <div>
-          <img src={attachment} alt='preview' width='50px' height='50px' />
-          <button onClick={onClearAttachment}>Clear</button>
-        </div>
-      )}
-    </form>
+    <div className={styles.container}>
+      <div 
+        className={styles["text-length-counter"]}
+        style={{ color: nweet.length > 150 ? "red" : "inherit" }}  
+      >
+        {nweet.length} / 150
+      </div>
+      <form onSubmit={onSubmit} className={styles["input-wrapper"]}>
+        <textarea 
+          type='text'
+          rows={15}
+          ref={textareaRef}
+          value={nweet}
+          onChange={onChange}
+          placeholder="spit"
+          maxLength={150}
+          className={styles["input--text"]}
+        />
+
+        <input
+          type='file'
+          accept='image/*'
+          onChange={onFileChange}
+          ref={fileInput}
+        />
+        <input type='submit' value='POST' />
+        {attachment && (
+          <div>
+            <img src={attachment} alt='preview' width='50px' height='50px' />
+            <button onClick={onClearAttachment}>Clear</button>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 export default NweetFactory;
