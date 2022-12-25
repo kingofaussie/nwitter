@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { dbService, storageService } from "fbase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
@@ -8,6 +8,7 @@ import classNames from "classnames";
 // 클래스네임 중복 참고 https://ji-u.tistory.com/16
 
 const Nweet = ({ nweetObj, isOwner, }) => {
+  const textareaRef = useRef();
   // 수정 모드 토글
   const [editing, setEditing] = useState(false);
   const [newNweet, setNewNweet] = useState(nweetObj.text);
@@ -35,11 +36,35 @@ const Nweet = ({ nweetObj, isOwner, }) => {
     setEditing(false); // edit하고나서 더이상 edit모드 아니도록 하게한다.
   };
 
+  // 포스팅 글 높이 제한
+
+  const resize = useCallback(() => {
+    if (!textareaRef.current) {
+      return;
+    }
+
+    const currentRef = textareaRef.current;
+    currentRef.style.height = "54px";
+    currentRef.style.height = `${currentRef.scrollHeight + 4}px`;
+  }, []);
+
+  // textarea 입력,줄 제한
+
+ 
+
   const onChange = (event) => {
+    let currentRows = event.target.value.split("\n").length;
+    const maxRows = event.target.rows;
+    
+    if (currentRows === maxRows ) {
+      return;
+    }
+
     const {
       target: { value },
     } = event;
     setNewNweet(value);
+    resize();
   };
   return (
     <div className={styles.container}>
@@ -55,45 +80,67 @@ const Nweet = ({ nweetObj, isOwner, }) => {
           />
       )}
       {editing ? (
-        <>
+        <div style={{display: "flex", flexDirection: "column"}}>
+          <div 
+            className={styles["text-length-counter"]}
+            style={{ color: newNweet.length >= 150 ? "red" : "inherit"}}
+          >
+            {newNweet.length} / 150
+          </div>
           {isOwner && (
-            <>
               <form onSubmit={onSubmit}>
-                <input
-                  type='text'
-                  placeholder='Edit your nweet'
+                <textarea
+                  className={styles["edit__text-input"]}
+                  rows={15}
+                  ref={textareaRef}
+                  placeholder='내용을 입력하세요.'
                   value={newNweet}
                   required
+                  maxLength={150}
                   onChange={onChange}
+                  onFocus={resize}
                 />
-                <input type='submit' value='Update Nweet' />
+                <div className={styles["edit__btn-wrapper"]}>
+                    <input 
+                      id='edit-submit'
+                      type='submit'
+                      value="완료"
+                      className={classNames(styles["edit__submit"])}
+                    />
+                  <button 
+                    className={classNames(styles["edit__cancel"])}
+                    onClick={toggleEditing}
+                    >
+                      취소
+                  </button>
+                </div>
               </form>
-              <button onClick={toggleEditing}>Cancel</button>
-            </>
           )}
-        </>
+        </div>
       ) : (
         <div className={classNames(styles["nweet-box"])}>
+
           <div className={styles["nweet-box__user"]}>
-          <span>
+          <span
+            className={styles["profile-img"]}
+            onClick={() => {
+              setModalActive("profile");
+            }}
+          >
             {nweetObj.displayProfile ? (
-              <img 
-                src={nweetObj.displayProfile} 
-                onClick={() => {
-                  setModalActive("profile");
-                }}
-              />
+              <img src={nweetObj.displayProfile} alt="profile"/>
             ) : (
               <div className={styles["profile-img"]}>
                 <img 
                   src= 'https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800'
-                  onClick={() => {
-                    setModalActive("profile");
-                  }}  
                 />
               </div>
             )}
-            <span>{`${nweetObj.displayName}`}</span>
+          </span>
+          <span
+            className={styles["username"]}
+          >
+            {`${nweetObj.displayName}`}
           </span>
           </div>
           {/* 자신의 작성 트윗 */}  

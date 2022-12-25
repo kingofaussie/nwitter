@@ -24,6 +24,17 @@
       right: auto;
       bottom: 90px;
     }
+    .text-length-counter {
+      width: 60vw;
+      max-width: 525px;
+      min-width: 100px;
+      text-align: end;
+      align-self: center;
+      padding: {
+        top: 20px;
+        bottom: 5px;
+      }
+    }
 
     .nweet-box {
       display: flex;
