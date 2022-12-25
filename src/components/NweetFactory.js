@@ -1,9 +1,11 @@
+import classNames from 'classnames';
 import { dbService, storageService } from "fbase";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useCallback, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styles from "./NweetFactory.module.scss";
+
 
 const NweetFactory = ({ userObj }) => {
   const textareaRef = useRef();
@@ -53,9 +55,17 @@ const NweetFactory = ({ userObj }) => {
     setAttachment("");
   };
   const onChange = (event) => {
+    let currenRows = event.target.value.split("\n").length;
+    const maxRows = event.target.rows;
+
+    if (currenRows === maxRows) {
+      return;
+    }
+
     const {
       target: { value },
     } = event;
+    
     setNweet(value);
     resize();
   };
@@ -99,21 +109,46 @@ const NweetFactory = ({ userObj }) => {
           maxLength={150}
           className={styles["input--text"]}
         />
-
         <input
           type='file'
+          id='uploading'
           accept='image/*'
           onChange={onFileChange}
           ref={fileInput}
+          style={{display: "none"}}
         />
-        <input type='submit' value='POST' />
-        {attachment && (
-          <div>
-            <img src={attachment} alt='preview' width='50px' height='50px' />
-            <button onClick={onClearAttachment}>Clear</button>
-          </div>
+        {attachment? (
+          <button
+            onClick={onClearAttachment}
+            className={classNames(styles["btn--delete"], styles.btn)}
+          >
+            <i className="fa-solid fa-trash-can"></i>
+          </button> 
+        ) : (
+          <label
+            htmlFor='uploading'
+            className={classNames(styles['input--file'], styles.btn)}
+          >
+            <i className="fa-regular fa-image"></i>
+          </label>
         )}
+        <label
+          htmlFor='submit'
+          className={classNames(styles["input--submit"], styles.btn)}
+        >
+          <i className="fa-regular fa-paper-plane"></i>
+        </label>
+        <input id='submit' type='submit' value='POST' style={{display: "none"}} />
       </form>
+      {attachment && (
+            <img 
+              src={attachment} 
+              alt='preview' 
+              width='50px' 
+              height='50px' 
+              className={styles["preview-img"]}
+            />
+        )}
     </div>
   );
 };
