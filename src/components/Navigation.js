@@ -5,25 +5,35 @@ import { Link } from "react-router-dom";
 import styles from "./Navigation.module.scss";
 
 const Navigation = ({ userObj }) => (
-  <nav>
-    <ul>
-      <li>
-        <Link to='/'>Home</Link>
+  <ul className ={styles.nav}>
+      <li
+        className={classNames(styles["nav__item"], styles["nav__item--home"])}
+      >
+        <Link to='/' className={styles.Link}>
+        <span className={styles["logo-text"]}>Spit</span>
+        </Link>
       </li>
-      <li>
+
+      <li
+        className={classNames(
+          styles['nav__item'],
+          styles['nav__item--profile']
+        )}
+      >
         {userObj && (
-          <Link to='/profile'>
-            <span>{userObj.displayName}의 Profile</span>
+          <Link to='/profile' className={styles.Link}>
+            <span className={styles["profile-text"]}>
+              {userObj.displayName}의 Profile
+            </span>
+            <span className={styles["profile-img"]}>
             <img
               src={userObj.photoURL}
-              width='50'
-              height='50'
               alt='Profile 위'
             />
+            </span>
           </Link>
         )}
       </li>
-    </ul>
-  </nav>
+  </ul>
 );
 export default Navigation;

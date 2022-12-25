@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import AppRouter from "components/Router";
 import { authService } from "fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import styles from "./App.module.scss";
+import { Reset } from 'styled-reset';
+// import { createGlobalStyle } from 'styled-components';
+
+
+// const GlobalStyles = createGlobalStyle`
+//     ${Reset};
+// `;
 
 function App() {
   const [init, setInit] = useState(false);
@@ -42,7 +50,8 @@ function App() {
     });
   };
   return (
-    <>
+    <div className={styles.app}>
+      <Reset />
       {init ? (
         <AppRouter
           refreshUser={refreshUser}
@@ -50,12 +59,14 @@ function App() {
           userObj={userObj}
         />
       ) : (
+        <div className={styles.loading}>
         "Initailizing…"
+        </div>
       )}
       <footer>
         &copy; {new Date().getFullYear()}. Spit-Out All Rights Reserved.
       </footer>
-    </>
+    </div>
   );
 }
 

@@ -5,11 +5,13 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useCallback, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styles from "./NweetFactory.module.scss";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faCamera } from '@fortawesome/free-solid-svg-icons'
 
 const NweetFactory = ({ userObj }) => {
   const textareaRef = useRef();
-  const attachmentInputRef = useRef();
   const [nweet, setNweet] = useState("");
   const [attachment, setAttachment] = useState("");
 
@@ -65,7 +67,7 @@ const NweetFactory = ({ userObj }) => {
     const {
       target: { value },
     } = event;
-    
+
     setNweet(value);
     resize();
   };
@@ -122,30 +124,29 @@ const NweetFactory = ({ userObj }) => {
             onClick={onClearAttachment}
             className={classNames(styles["btn--delete"], styles.btn)}
           >
-            <i className="fa-solid fa-trash-can"></i>
+            <FontAwesomeIcon icon={faTrashCan} size="lg" />
+            
           </button> 
         ) : (
           <label
             htmlFor='uploading'
             className={classNames(styles['input--file'], styles.btn)}
           >
-            <i className="fa-regular fa-image"></i>
+            <FontAwesomeIcon icon={faCamera} size="lg" />
           </label>
         )}
         <label
           htmlFor='submit'
           className={classNames(styles["input--submit"], styles.btn)}
         >
-          <i className="fa-regular fa-paper-plane"></i>
+          <FontAwesomeIcon icon={faPaperPlane} size="lg" />
         </label>
-        <input id='submit' type='submit' value='POST' style={{display: "none"}} />
+        <input id='submit' type='submit' style={{display: "none"}} />
       </form>
       {attachment && (
             <img 
               src={attachment} 
               alt='preview' 
-              width='50px' 
-              height='50px' 
               className={styles["preview-img"]}
             />
         )}

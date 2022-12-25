@@ -3,7 +3,7 @@
     flex-direction: column;
     text-align: center;
     padding: {
-        bottom: 10px;
+      bottom: 10px;
     }
     .text-length-counter {
       width: 85vw;
@@ -18,13 +18,13 @@
       }
     }
     .input-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-width: 320px;
-        padding: {
-            bottom: 40px;
-        }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 320px;
+      padding: {
+        bottom: 40px;
+      }
 
         .input--text {
             overflow: visible;
@@ -38,7 +38,7 @@
             border: 1px solid #221718;
             font-size: 16px;
             line-height: 20px;
-            transform: translateY(45px);
+            transform: translateX(45px);
             box-shadow: 3px 3px 1px gray;
             padding: {
                 top: 15px;
@@ -90,7 +90,6 @@
           border-radius: 50%;
           overflow: hidden;
           width: 40px;
-          min-width: 40px;
           height: 40px;
           transform: translateX(-45px);
           cursor: pointer;
