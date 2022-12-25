@@ -10,7 +10,7 @@ const Navigation = ({ userObj }) => (
         className={classNames(styles["nav__item"], styles["nav__item--home"])}
       >
         <Link to='/' className={styles.Link}>
-        <span className={styles["logo-text"]}>Spit</span>
+          <span className={styles["logo-text"]}>Spit</span>
         </Link>
       </li>
 
