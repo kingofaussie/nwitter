@@ -3,13 +3,16 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
+import styles from "./AuthForm.module.scss";
+import classNames from "classnames";
 
-const AuthForm = () => {
+const AuthForm = ({ alert, setAlert }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [newAccount, setNewAccount] = useState(true);
-  const [error, setError] = useState("");
+  const [newAccount, setNewAccount] = useState(false);
+  const [findPw, setFindPw] = useState(false);
   const onChange = (event) => {
     const {
       target: { name, value },
@@ -27,24 +30,34 @@ const AuthForm = () => {
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
-      let data;
       const auth = getAuth();
       if (newAccount) {
         // create account
-        data = await createUserWithEmailAndPassword(auth, email, password);
-      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else if (!newAccount && !findPw) {
         // log in
-        data = await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, password);
+      } else if (findPw) {
+        await sendPasswordResetEmail(email).then(
+          setAlert("메일이 발송되었습니다.")
+        );
       }
-      console.log(data);
     } catch (error) {
-      setError(error.message); // 에러메세지
+      setAlert(error.message); // 에러메세지
     }
   };
-  const toggleAccount = () => setNewAccount((prev) => !prev);
+  const toggleAccount = () => {
+    setNewAccount((prev) => !prev);
+    setFindPw(false);
+  };
+
+  const toggleFindPw = () => {
+    setFindPw((prev) => !prev);
+    setNewAccount(false);
+  };
   return (
-    <>
-      <form onSubmit={onSubmit}>
+    <div className={styles.container}>
+      <form onSubmit={onSubmit} className={styles.form}>
         <input
           name='email'
           type='email'
@@ -52,25 +65,55 @@ const AuthForm = () => {
           required
           value={email}
           onChange={onChange}
+          autoComplete='username'
+          className={classNames(styles.email, styles["input--text"])}
         />
-        <input
-          name='password'
-          type='password'
-          placeholder='Password'
-          required
-          value={password}
-          onChange={onChange}
-        />
-        <input
+        {!findPw && (
+          <input
+            name='password'
+            type='password'
+            placeholder='Password'
+            required
+            value={password}
+            onChange={onChange}
+            autoComplete='current-password'
+            className={classNames(styles.password, styles["input--text"])}
+          />
+        )}
+        <div className={styles.alert}>{alert}</div>
+
+        <div className={styles["btn-group"]}>
+          <input
+            className={classNames(styles.submit, styles.btn)}
+            type='submit'
+            value={
+              findPw
+                ? "재설정 메일 발송"
+                : newAccount
+                ? "위 정보로 가입하기"
+                : "로그인"
+            }
+          />
+          <span
+            onClick={toggleAccount}
+            className={classNames(styles.create, styles.btn)}
+          >
+            {newAccount ? "기존 계정으로 로그인" : "새 계정 만들기"}
+          </span>
+          <span onClick={toggleFindPw} className={classNames(styles.btn)}>
+            {findPw ? "돌아가기" : "비밀번호 재설정"}
+          </span>
+        </div>
+      </form>
+    </div>
+  );
+};
+{
+  /* <input
           type='submit'
           value={newAccount ? "Create Account" : "Sign in"}
         />
-        {error && <span>{error}</span>}
-      </form>
-      <span onClick={toggleAccount}>
-        {newAccount ? "Sign in" : "Create Account"}
-      </span>
-    </>
-  );
-};
+        {error && <span>{error}</span>} */
+}
+
 export default AuthForm;

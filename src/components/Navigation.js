@@ -8,7 +8,7 @@ const Navigation = ({ userObj }) => (
   <ul className={styles.nav}>
     <li className={classNames(styles["nav__item"], styles["nav__item--home"])}>
       <Link to='/' className={styles.Link}>
-        <span className={styles["logo-text"]}>Spit-out</span>
+        <span className={styles["logo-text"]}>Silencer</span>
       </Link>
     </li>
 

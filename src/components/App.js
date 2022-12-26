@@ -59,7 +59,7 @@ function App() {
         <div className={styles.loading}>"Initailizing…"</div>
       )}
       <footer>
-        &copy; {new Date().getFullYear()}. Spit-Out All Rights Reserved.
+        &copy; {new Date().getFullYear()}. Silencer All Rights Reserved.
       </footer>
     </div>
   );
