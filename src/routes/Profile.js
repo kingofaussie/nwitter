@@ -1,15 +1,19 @@
-import app, { authService, dbService, storageService } from "fbase";
+import { authService, dbService, storageService } from "fbase";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import classNames from "classnames";
 import { v4 as uuidv4 } from "uuid";
-import {
-  getDownloadURL,
-  ref,
-  uploadString,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import styles from "./Profile.module.scss";
 import Nweet from "components/Nweet";
 
@@ -23,7 +27,8 @@ const Profile = ({ refreshUser, userObj }) => {
 
   // 내 게시글만 불러오기
   const getMyNweets = async () => {
-    const q = query( // 원하는 조건으로 데이터를 가져올수있음.
+    const q = query(
+      // 원하는 조건으로 데이터를 가져올수있음.
       collection(dbService, "nweets"),
       where("creatorId", "==", userObj.uid), // 조건에 부합하는 글만 가져오도록함.
       orderBy("createdAt", "desc") // 게시글 순서
@@ -83,10 +88,11 @@ const Profile = ({ refreshUser, userObj }) => {
     );
     const querySnapshot = await getDocs(q);
 
-
-    // 닉네임 
-    if(userObj.displayName !== newDisplayName) {
-      await updateProfile(authService.currentUser, { displayName: newDisplayName });
+    // 닉네임
+    if (userObj.displayName !== newDisplayName) {
+      await updateProfile(authService.currentUser, {
+        displayName: newDisplayName,
+      });
 
       querySnapshot.forEach((document) => {
         updateDoc(doc(dbService, `nweets/${document.id}`), {
@@ -94,29 +100,29 @@ const Profile = ({ refreshUser, userObj }) => {
         });
       });
     }
-      // 프사
-      let attachmentUrl = "";
-      if (newDisplayProfile !== ""){
-        const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
-        const uploadFile = await uploadString(
-          fileRef,
-          newDisplayProfile,
-          "data_url"
-        );
-        attachmentUrl = await getDownloadURL(uploadFile.ref);
+    // 프사
+    let attachmentUrl = "";
+    if (newDisplayProfile !== "") {
+      const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+      const uploadFile = await uploadString(
+        fileRef,
+        newDisplayProfile,
+        "data_url"
+      );
+      attachmentUrl = await getDownloadURL(uploadFile.ref);
 
-        await updateProfile(authService.currentUser, { photoURL: attachmentUrl });
+      await updateProfile(authService.currentUser, { photoURL: attachmentUrl });
 
-        querySnapshot.forEach((document) => {
-          updateDoc(doc(dbService, `nweets/${document.id}`), {
-            displayProfile: attachmentUrl,
-          });
+      querySnapshot.forEach((document) => {
+        updateDoc(doc(dbService, `nweets/${document.id}`), {
+          displayProfile: attachmentUrl,
         });
-      }
-      fileInput.current.value = "";
-      setNewDisplayProfile("");
-      refreshUser();
-    };
+      });
+    }
+    fileInput.current.value = "";
+    setNewDisplayProfile("");
+    refreshUser();
+  };
 
   // 프로필 사진 첨부
   const onFileChange = (event) => {
@@ -147,87 +153,91 @@ const Profile = ({ refreshUser, userObj }) => {
   const fileInput = useRef();
 
   return (
-    <div>
+    <div className={styles.container}>
+      <form onSubmit={onSubmit} className={styles["form"]}>
+        {authService.currentUser.photoURL ? (
+          // 기본 전제가 프로필 사진이 있는 조건 하에
+          newDisplayProfile ? (
+            <label htmlFor='attach-file' className={styles["profile-img"]}>
+              <img src={newDisplayProfile} alt='newD' />
+            </label>
+          ) : (
+            <label htmlFor='attach-file' className={styles["profile-img"]}>
+              <img src={authService.currentUser.photoURL} alt='currentPhoto' />
+            </label>
+          )
+        ) : // 기본 전제가 프로필 사진이 없다. (거짓일 경우 내가 지정해둔 로니콜먼 사진이 기본프로필이됨.)
+        newDisplayProfile ? (
+          <label htmlFor='attach-file' className={styles["profile-img"]}>
+            <div className='currentPhotoFalse'>
+              <img src={newDisplayProfile} alt='newPhotoTrue' />{" "}
+            </div>
+          </label>
+        ) : (
+          <label htmlFor='attach-file' className={styles["profile-img"]}>
+            <div>
+              <img
+                src='https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800'
+                alt='noPhoto'
+              />
+            </div>
+          </label>
+        )}
         <div>
-          <form onSubmit={onSubmit}>
-            {authService.currentUser.photoURL ? (
-              // 기본 전제가 프로필 사진이 있는 조건 하에
-              newDisplayProfile ? (
-                <label
-                  htmlFor='attach-file'
-                >
-                  <img src={newDisplayProfile} />
-                </label>
-              ) : (
-                <label
-                  htmlFor="attach-file"
-                >
-                  <div></div>
-                  <img 
-                    src={authService.currentUser.photoURL}
-                    alt="currentPhoto"
-                  />
-                </label>
-              )
-            ) : 
-            // 기본 전제가 프로필 사진이 없다. (거짓일 경우 내가 지정해둔 로니콜먼 사진이 기본프로필이됨.)
-            newDisplayProfile ? (
-              <label 
-                htmlFor="attach-file"
-              >
-                <div>
-                  <img
-                    src={newDisplayProfile}
-                    alt="newPhoto"
-                  />
-                </div>
-              </label>
-            ) : (
-              <label 
-                htmlFor="attach-file"
-              >
-                <div>
-                  <img
-                    src='https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800'
-                    alt='noPhoto'
-                  />
-                </div>
-              </label>
-            )}
-
-            <input
-              id="attach-file"
-              type="file"
-              accept="image/*"
-              onChange={onFileChange}
-              style={{
-                opacity: 0,
-                height: 0,
-              }}
-              ref={fileInput}
-              name="newDisplayProfile"
-            />
-            <input
-              onChange={onChange}
-              type="text"
-              autoFocus
-              placeholder="Display Name"
-              value={newDisplayName}
-              className="formInput profile"
-              maxLength={30}
-            />
-            <input
-              type="submit"
-              value="Update Profile"
-              className="formBtn profile"
-              style={{
-                marginTop: 10,
-              }}
-            />
-          </form>
-          <button onClick={onDeleteClick}>탈퇴하기</button>
-          <button onClick={onLogOutClick}>로그아웃</button>
+          <label htmlFor='attach-file' className={styles["input--img"]}>
+            사진 변경
+          </label>
+          <input
+            id='attach-file'
+            type='file'
+            accept='image/*'
+            onChange={onFileChange}
+            style={{
+              display: "none",
+            }}
+            ref={fileInput}
+            name='newDisplayProfile'
+          />
         </div>
+        <div>
+          <label
+            htmlFor='displayName'
+            className={classNames(
+              styles["input--name__label"],
+              styles["edit__label"]
+            )}
+          >
+            닉네임
+          </label>
+          <input
+            id='displayName'
+            onChange={onChange}
+            type='text'
+            autoFocus
+            placeholder='Display Name'
+            value={newDisplayName}
+            className={classNames(styles["input--name"], styles["edit__input"])}
+            maxLength={30}
+            minLength={2}
+          />
+        </div>
+        <div>
+          <input
+            id='submit'
+            type='submit'
+            value='Update Profile'
+            className={styles.submit}
+          />
+        </div>
+        <div>
+          <button className={styles.logout} onClick={onDeleteClick}>
+            탈퇴하기
+          </button>
+          <button className={styles.delete} onClick={onLogOutClick}>
+            로그아웃
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

@@ -1,71 +1,71 @@
 .nav {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    min-width: 320px;
-    position: relative;
-    padding: {
-        top: 5px;
-        bottom: 80px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  min-width: 320px;
+  position: relative;
+  padding: {
+    top: 5px;
+    bottom: 80px;
+  }
+
+  .nav__item {
+    .Link {
+      display: flex;
+      align-items: center;
+      color: #221718;
+      text-decoration: none;
     }
 
-    .nav__item {
-        .Link {
-            display: flex;
-            align-items: center;
-            color: #221718;
-            text-decoration: none;
-        }
-
-        &.nav__item--home {
-            padding: {
-                left: 15px;
-            }
-            margin: {
-                left: auto;
-                right: auto;
-            }
-            .logo-text {
-                line-height: 50px;
-                font-size: 30px;
-                font-weight: 900;
-                padding-top: 5px;
-            }
-        }
-
-        &.nav__item--profile {
-            padding-top: 5px;
-            padding: {
-                left: 40px;
-                right: 15px;
-            }
-            margin: {
-                left: atuo;
-                right: auto;
-            }
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            .profile-text {
-                line-height: 50px;
-                font-weight: 600;
-                margin-right: 10px;
-            }
-
-            .profile-img {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 30px;
-                height: 30px;
-                border: 1px solid #221718;
-                border-radius: 50%;
-                overflow: hidden;
-                img {
-                    height: 30px;
-                }
-            }
-        }
+    &.nav__item--home {
+      padding: {
+        left: 15px;
+      }
+      margin: {
+        left: auto;
+        right: auto;
+      }
+      .logo-text {
+        line-height: 50px;
+        font-size: 30px;
+        font-weight: 900;
+        padding-top: 5px;
+      }
     }
+
+    &.nav__item--profile {
+      padding-top: 5px;
+      padding: {
+        left: 40px;
+        right: 15px;
+      }
+      margin: {
+        left: atuo;
+        right: auto;
+      }
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .profile-text {
+        line-height: 50px;
+        font-weight: 600;
+        margin-right: 10px;
+      }
+
+      .profile-img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid #221718;
+        border-radius: 50%;
+        overflow: hidden;
+        img {
+          height: 30px;
+        }
+      }
+    }
+  }
 }

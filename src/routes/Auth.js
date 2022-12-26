@@ -3,29 +3,29 @@ import {
   GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
-  } from 'firebase/auth';
-import { authService } from 'fbase';
-import AuthForm from 'components/AuthForm';
+} from "firebase/auth";
+import { authService } from "fbase";
+import AuthForm from "components/AuthForm";
 
 const Auth = () => {
   const onSocialClick = async (event) => {
     const {
-      target:{ name },
+      target: { name },
     } = event;
     let provider;
     try {
-      if(name === "google" ) {
+      if (name === "google") {
         provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(authService , provider);
+        const result = await signInWithPopup(authService, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-      } else if(name ==="github") {
+      } else if (name === "github") {
         provider = new GithubAuthProvider();
         const result = await signInWithPopup(authService, provider);
         const credential = GithubAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   };
@@ -42,6 +42,6 @@ const Auth = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Auth;

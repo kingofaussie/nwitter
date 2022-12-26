@@ -1,14 +1,14 @@
-import classNames from 'classnames';
+import classNames from "classnames";
 import { dbService, storageService } from "fbase";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useCallback, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styles from "./NweetFactory.module.scss";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { faCamera } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 const NweetFactory = ({ userObj }) => {
   const textareaRef = useRef();
@@ -16,7 +16,7 @@ const NweetFactory = ({ userObj }) => {
   const [attachment, setAttachment] = useState("");
 
   const resize = useCallback(() => {
-    if(!textareaRef.current) {
+    if (!textareaRef.current) {
       return;
     }
 
@@ -94,20 +94,20 @@ const NweetFactory = ({ userObj }) => {
 
   return (
     <div className={styles.container}>
-      <div 
+      <div
         className={styles["text-length-counter"]}
-        style={{ color: nweet.length > 150 ? "red" : "inherit" }}  
+        style={{ color: nweet.length > 150 ? "red" : "inherit" }}
       >
         {nweet.length} / 150
       </div>
       <form onSubmit={onSubmit} className={styles["input-wrapper"]}>
-        <textarea 
+        <textarea
           type='text'
           rows={15}
           ref={textareaRef}
           value={nweet}
           onChange={onChange}
-          placeholder="spit"
+          placeholder='spit'
           maxLength={150}
           className={styles["input--text"]}
         />
@@ -117,39 +117,34 @@ const NweetFactory = ({ userObj }) => {
           accept='image/*'
           onChange={onFileChange}
           ref={fileInput}
-          style={{display: "none"}}
+          style={{ display: "none" }}
         />
-        {attachment? (
+        {attachment ? (
           <button
             onClick={onClearAttachment}
             className={classNames(styles["btn--delete"], styles.btn)}
           >
-            <FontAwesomeIcon icon={faTrashCan} size="lg" />
-            
-          </button> 
+            <FontAwesomeIcon icon={faTrashCan} size='lg' />
+          </button>
         ) : (
           <label
             htmlFor='uploading'
-            className={classNames(styles['input--file'], styles.btn)}
+            className={classNames(styles["input--file"], styles.btn)}
           >
-            <FontAwesomeIcon icon={faCamera} size="lg" />
+            <FontAwesomeIcon icon={faCamera} size='lg' />
           </label>
         )}
         <label
           htmlFor='submit'
           className={classNames(styles["input--submit"], styles.btn)}
         >
-          <FontAwesomeIcon icon={faPaperPlane} size="lg" />
+          <FontAwesomeIcon icon={faPaperPlane} size='lg' />
         </label>
-        <input id='submit' type='submit' style={{display: "none"}} />
+        <input id='submit' type='submit' style={{ display: "none" }} />
       </form>
       {attachment && (
-            <img 
-              src={attachment} 
-              alt='preview' 
-              className={styles["preview-img"]}
-            />
-        )}
+        <img src={attachment} alt='preview' className={styles["preview-img"]} />
+      )}
     </div>
   );
 };

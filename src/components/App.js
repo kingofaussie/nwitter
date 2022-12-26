@@ -3,9 +3,8 @@ import AppRouter from "components/Router";
 import { authService } from "fbase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import styles from "./App.module.scss";
-import { Reset } from 'styled-reset';
+import { Reset } from "styled-reset";
 // import { createGlobalStyle } from 'styled-components';
-
 
 // const GlobalStyles = createGlobalStyle`
 //     ${Reset};
@@ -22,9 +21,7 @@ function App() {
       if (user) {
         setIsSignedIn(true);
         setUserObj({
-          displayName: user.displayName
-            ? user.displayName
-            : "무명",
+          displayName: user.displayName ? user.displayName : "무명",
           uid: user.uid,
           updateProfile: (args) => user.updateProfile(args),
           photoURL: user.photoURL
@@ -59,9 +56,7 @@ function App() {
           userObj={userObj}
         />
       ) : (
-        <div className={styles.loading}>
-        "Initailizing…"
-        </div>
+        <div className={styles.loading}>"Initailizing…"</div>
       )}
       <footer>
         &copy; {new Date().getFullYear()}. Spit-Out All Rights Reserved.
