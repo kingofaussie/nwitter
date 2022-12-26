@@ -6,6 +6,8 @@ import ImgModal from "./ImgModal";
 import styles from "./Nweet.module.scss";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 // 클래스네임 중복 참고 https://ji-u.tistory.com/16
 
 const Nweet = ({ nweetObj, isOwner }) => {
@@ -182,14 +184,14 @@ const Nweet = ({ nweetObj, isOwner }) => {
                   onClick={onDeleteClick}
                   className={classNames(styles["btn--delete"], styles.btn)}
                 >
-                  Delete Nweet
+                  <FontAwesomeIcon icon={faTrashCan} size='lg' />
                 </button>
 
                 <button
                   onClick={toggleEditing}
                   className={classNames(styles["btn--edit"], styles.btn)}
                 >
-                  Edit Nweet
+                  <FontAwesomeIcon icon={faPenToSquare} size='lg' />
                 </button>
               </>
             )}
