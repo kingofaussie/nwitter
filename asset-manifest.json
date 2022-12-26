@@ -1,10 +1,13 @@
 {
   "files": {
-    "main.js": "/silencer/static/js/main.cc9344f8.js",
+    "main.css": "/silencer/static/css/main.33d9d935.css",
+    "main.js": "/silencer/static/js/main.8252d296.js",
     "index.html": "/silencer/index.html",
-    "main.cc9344f8.js.map": "/silencer/static/js/main.cc9344f8.js.map"
+    "main.33d9d935.css.map": "/silencer/static/css/main.33d9d935.css.map",
+    "main.8252d296.js.map": "/silencer/static/js/main.8252d296.js.map"
   },
   "entrypoints": [
-    "static/js/main.cc9344f8.js"
+    "static/css/main.33d9d935.css",
+    "static/js/main.8252d296.js"
   ]
 }
