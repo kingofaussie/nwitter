@@ -1,13 +1,15 @@
 {
   "files": {
-    "main.css": "/silencer/static/css/main.33d9d935.css",
-    "main.js": "/silencer/static/js/main.8252d296.js",
+    "main.css": "/silencer/static/css/main.9d3604c4.css",
+    "main.js": "/silencer/static/js/main.2561173a.js",
+    "static/media/github-brands.svg": "/silencer/static/media/github-brands.ca3156b4372e9d26fc1d699002d06890.svg",
     "index.html": "/silencer/index.html",
-    "main.33d9d935.css.map": "/silencer/static/css/main.33d9d935.css.map",
-    "main.8252d296.js.map": "/silencer/static/js/main.8252d296.js.map"
+    "static/media/google-brands.svg": "/silencer/static/media/google-brands.73314f41027e44bf7cd41c73e3f72202.svg",
+    "main.9d3604c4.css.map": "/silencer/static/css/main.9d3604c4.css.map",
+    "main.2561173a.js.map": "/silencer/static/js/main.2561173a.js.map"
   },
   "entrypoints": [
-    "static/css/main.33d9d935.css",
-    "static/js/main.8252d296.js"
+    "static/css/main.9d3604c4.css",
+    "static/js/main.2561173a.js"
   ]
 }
