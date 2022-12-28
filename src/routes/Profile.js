@@ -15,7 +15,7 @@ import classNames from "classnames";
 import { v4 as uuidv4 } from "uuid";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import styles from "./Profile.module.scss";
-import Nweet from "components/Nweet";
+import Silencer from "components/Silencer";
 
 const Profile = ({ refreshUser, userObj }) => {
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
@@ -26,10 +26,10 @@ const Profile = ({ refreshUser, userObj }) => {
   const navigate = useNavigate();
 
   // 내 게시글만 불러오기
-  const getMyNweets = async () => {
+  const getMySilencers = async () => {
     const q = query(
       // 원하는 조건으로 데이터를 가져올수있음.
-      collection(dbService, "nweets"),
+      collection(dbService, "silencers"),
       where("creatorId", "==", userObj.uid), // 조건에 부합하는 글만 가져오도록함.
       orderBy("createdAt", "desc") // 게시글 순서
     );
@@ -41,8 +41,8 @@ const Profile = ({ refreshUser, userObj }) => {
 
   // 프로필창을 들어가면 호출되면서 내 게시글만 보임.
   useEffect(() => {
-    getMyNweets();
-  }, [doUpdate, getMyNweets]);
+    getMySilencers();
+  }, [doUpdate, getMySilencers]);
 
   // 로그아웃
   const onLogOutClick = () => {
@@ -83,7 +83,7 @@ const Profile = ({ refreshUser, userObj }) => {
     }
 
     const q = query(
-      collection(dbService, "nweets"),
+      collection(dbService, "silencers"),
       where("creatorId", "==", userObj.uid)
     );
     const querySnapshot = await getDocs(q);
@@ -95,7 +95,7 @@ const Profile = ({ refreshUser, userObj }) => {
       });
 
       querySnapshot.forEach((document) => {
-        updateDoc(doc(dbService, `nweets/${document.id}`), {
+        updateDoc(doc(dbService, `silencers/${document.id}`), {
           displayName: newDisplayName,
         });
       });
@@ -114,7 +114,7 @@ const Profile = ({ refreshUser, userObj }) => {
       await updateProfile(authService.currentUser, { photoURL: attachmentUrl });
 
       querySnapshot.forEach((document) => {
-        updateDoc(doc(dbService, `nweets/${document.id}`), {
+        updateDoc(doc(dbService, `silencers/${document.id}`), {
           displayProfile: attachmentUrl,
         });
       });

@@ -4,15 +4,15 @@ import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useCallback, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import styles from "./NweetFactory.module.scss";
+import styles from "./SilencerF.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
-const NweetFactory = ({ userObj }) => {
+const SilencerF = ({ userObj }) => {
   const textareaRef = useRef();
-  const [nweet, setNweet] = useState("");
+  const [silencer, setSilencer] = useState("");
   const [attachment, setAttachment] = useState("");
 
   const resize = useCallback(() => {
@@ -28,7 +28,7 @@ const NweetFactory = ({ userObj }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    if (attachment === "" && nweet === "") {
+    if (attachment === "" && silencer === "") {
       return;
     }
 
@@ -42,8 +42,8 @@ const NweetFactory = ({ userObj }) => {
       );
       attachmentUrl = await getDownloadURL(response.ref);
     }
-    const nweetObj = {
-      text: nweet,
+    const silencerObj = {
+      text: silencer,
       createdAt: Date.now(),
       creatorId: userObj.uid,
       displayName: userObj.displayName,
@@ -51,9 +51,9 @@ const NweetFactory = ({ userObj }) => {
       attachmentUrl,
       like: [],
     };
-    //트윗하기 누르면 nweetObj 형태로 새로운 document 생성하여 nweets 콜렉션에 넣기
-    await addDoc(collection(dbService, "nweets"), nweetObj);
-    setNweet("");
+    //트윗하기 누르면 silencerObj 형태로 새로운 document 생성하여 silencers 콜렉션에 넣기
+    await addDoc(collection(dbService, "silencers"), silencerObj);
+    setSilencer("");
     setAttachment("");
   };
   const onChange = (event) => {
@@ -68,7 +68,7 @@ const NweetFactory = ({ userObj }) => {
       target: { value },
     } = event;
 
-    setNweet(value);
+    setSilencer(value);
     resize();
   };
 
@@ -96,18 +96,18 @@ const NweetFactory = ({ userObj }) => {
     <div className={styles.container}>
       <div
         className={styles["text-length-counter"]}
-        style={{ color: nweet.length > 150 ? "red" : "inherit" }}
+        style={{ color: silencer.length > 150 ? "red" : "inherit" }}
       >
-        {nweet.length} / 150
+        {silencer.length} / 150
       </div>
       <form onSubmit={onSubmit} className={styles["input-wrapper"]}>
         <textarea
           type='text'
           rows={15}
           ref={textareaRef}
-          value={nweet}
+          value={silencer}
           onChange={onChange}
-          placeholder='spit'
+          placeholder='Shh'
           maxLength={150}
           className={styles["input--text"]}
         />
@@ -148,4 +148,4 @@ const NweetFactory = ({ userObj }) => {
     </div>
   );
 };
-export default NweetFactory;
+export default SilencerF;

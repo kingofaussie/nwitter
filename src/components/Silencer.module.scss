@@ -105,7 +105,7 @@
     }
   }
 
-  .nweet-box {
+  .silencer-box {
     display: flex;
     width: 100%;
     .responsive-wrapper {
@@ -113,7 +113,7 @@
       width: 100%;
       flex-shrink: 1;
 
-      .nweet-box__user {
+      .silencer-box__user {
         display: flex;
         align-items: center;
         margin: {
@@ -154,7 +154,7 @@
         flex-direction: column;
         justify-content: space-between;
         width: 100%;
-        .nweet-box__text {
+        .silencer-box__text {
           word-break: break-all;
           white-space: pre-wrap;
           display: flex;
@@ -170,7 +170,7 @@
           }
         }
 
-        .nweet-box__date {
+        .silencer-box__date {
           white-space: nowrap;
           font-size: 13px;
           color: rgb(84, 84, 84);
@@ -182,7 +182,7 @@
         }
       }
     }
-    .nweet-box__img {
+    .silencer-box__img {
       display: flex;
       justify-content: center;
       align-self: center;

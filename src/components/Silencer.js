@@ -3,48 +3,44 @@ import { dbService, storageService } from "fbase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import ImgModal from "./ImgModal";
-import styles from "./Nweet.module.scss";
+import styles from "./Silencer.module.scss";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 // 클래스네임 중복 참고 https://ji-u.tistory.com/16
 
-const Nweet = ({ nweetObj, isOwner }) => {
+const Silencer = ({ silencerObj, isOwner }) => {
   const textareaRef = useRef();
   // 수정 모드 토글
   const [editing, setEditing] = useState(false);
-  const [newNweet, setNewNweet] = useState(nweetObj.text);
+  const [newSilencer, setNewSilencer] = useState(silencerObj.text);
   // 이미지 모달
   const [modalActive, setModalActive] = useState(false);
 
   // 글 삭제
-  const NweetTextRef = doc(dbService, "nweets", `${nweetObj.id}`);
+  const SilencerTextRef = doc(dbService, "silencers", `${silencerObj.id}`);
 
   const onDeleteClick = async () => {
-    const ok = window.confirm("Are you sure you want to delete this nweet?");
+    const ok = window.confirm("Are you sure you want to delete this silencer?");
     if (ok) {
-      //delete nweet
-      await deleteDoc(NweetTextRef);
-      await deleteObject(ref(storageService, nweetObj.attachmentUrl));
+      //delete silencer
+      await deleteDoc(SilencerTextRef);
+      await deleteObject(ref(storageService, silencerObj.attachmentUrl));
     }
   };
 
   const toggleEditing = () => {
     setEditing((prev) => !prev);
-    setNewNweet(nweetObj.text);
+    setNewSilencer(silencerObj.text);
   };
   const onSubmit = async (event) => {
     event.preventDefault();
 
     await dbService
-      .doc(`nweets/${nweetObj.id}`)
-      .update("text", newNweet, "edited", new Date().getTime());
+      .doc(`silencers/${silencerObj.id}`)
+      .update("text", newSilencer, "edited", new Date().getTime());
     setEditing((prev) => !prev);
-    // await updateDoc(NweetTextRef, {
-    //   text: newNweet, // newNweet: input에 있는 text
-    // });
-    // setEditing(false); // edit하고나서 더이상 edit모드 아니도록 하게한다.
   };
 
   // 포스팅 글 높이 제한
@@ -72,7 +68,7 @@ const Nweet = ({ nweetObj, isOwner }) => {
     const {
       target: { value },
     } = event;
-    setNewNweet(value);
+    setNewSilencer(value);
     resize();
   };
   return (
@@ -81,9 +77,9 @@ const Nweet = ({ nweetObj, isOwner }) => {
         <ImgModal
           photoURL={
             modalActive === "post"
-              ? nweetObj.attachmentUrl
-              : nweetObj.displayProfile
-              ? nweetObj.displayProfile
+              ? silencerObj.attachmentUrl
+              : silencerObj.displayProfile
+              ? silencerObj.displayProfile
               : "https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800"
           }
           setModalActive={setModalActive}
@@ -93,9 +89,9 @@ const Nweet = ({ nweetObj, isOwner }) => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             className={styles["text-length-counter"]}
-            style={{ color: newNweet.length >= 150 ? "red" : "inherit" }}
+            style={{ color: newSilencer.length >= 150 ? "red" : "inherit" }}
           >
-            {newNweet.length} / 150
+            {newSilencer.length} / 150
           </div>
           {isOwner && (
             <form onSubmit={onSubmit}>
@@ -104,7 +100,7 @@ const Nweet = ({ nweetObj, isOwner }) => {
                 rows={15}
                 ref={textareaRef}
                 placeholder='내용을 입력하세요.'
-                value={newNweet}
+                value={newSilencer}
                 required
                 maxLength={150}
                 onChange={onChange}
@@ -128,17 +124,17 @@ const Nweet = ({ nweetObj, isOwner }) => {
           )}
         </div>
       ) : (
-        <div className={classNames(styles["nweet-box"])}>
+        <div className={classNames(styles["silencer-box"])}>
           <div className={styles["responsive-wrapper"]}>
-            <div className={styles["nweet-box__user"]}>
+            <div className={styles["silencer-box__user"]}>
               <span
                 className={styles["profile-img"]}
                 onClick={() => {
                   setModalActive("profile");
                 }}
               >
-                {nweetObj.displayProfile ? (
-                  <img src={nweetObj.displayProfile} alt='profile' />
+                {silencerObj.displayProfile ? (
+                  <img src={silencerObj.displayProfile} alt='profile' />
                 ) : (
                   <div className={styles["profile-img"]}>
                     <img src='https://mblogthumb-phinf.pstatic.net/MjAxNjExMjhfMTY4/MDAxNDgwMjk5NTg3MDk3.-DIKCA4JqC2khDyAcAaKZ3WDk6HyjW_gxNCV0v7OZ5Ig.lAJtlFPS1nQgFZUX2mvqH7NpikYg18GioJI0Q-V451Mg.JPEG.quadgym/2016-11-28_11-16-51.jpg?type=w800' />
@@ -146,31 +142,33 @@ const Nweet = ({ nweetObj, isOwner }) => {
                 )}
               </span>
               <span className={styles["username"]}>
-                {`${nweetObj.displayName}`}
+                {`${silencerObj.displayName}`}
               </span>
             </div>
             {/* 자신의 작성 트윗 */}
             <div className={styles["middle-section-wrapper"]}>
-              <div className={styles["nweet-box__text"]}>{nweetObj.text}</div>
-              <div className={styles["nweet-box__date"]}>
-                {`${new Date(nweetObj.createdAt).getFullYear()}/${
-                  new Date(nweetObj.createdAt).getMonth() + 1 < 10 ? "0" : ""
-                }${new Date(nweetObj.createdAt).getMonth() + 1}/${
-                  new Date(nweetObj.createdAt).getDate() < 10 ? "0" : ""
-                }${new Date(nweetObj.createdAt).getDate()} ${
-                  new Date(nweetObj.createdAt).getHours() < 10 ? "0" : ""
-                }${new Date(nweetObj.createdAt).getHours()}:${
-                  new Date(nweetObj.createdAt).getMinutes() < 10 ? "0" : ""
-                }${new Date(nweetObj.createdAt).getMinutes()}`}
-                {nweetObj.edited && " (수정됨)"}
+              <div className={styles["silencer-box__text"]}>
+                {silencerObj.text}
+              </div>
+              <div className={styles["silencer-box__date"]}>
+                {`${new Date(silencerObj.createdAt).getFullYear()}/${
+                  new Date(silencerObj.createdAt).getMonth() + 1 < 10 ? "0" : ""
+                }${new Date(silencerObj.createdAt).getMonth() + 1}/${
+                  new Date(silencerObj.createdAt).getDate() < 10 ? "0" : ""
+                }${new Date(silencerObj.createdAt).getDate()} ${
+                  new Date(silencerObj.createdAt).getHours() < 10 ? "0" : ""
+                }${new Date(silencerObj.createdAt).getHours()}:${
+                  new Date(silencerObj.createdAt).getMinutes() < 10 ? "0" : ""
+                }${new Date(silencerObj.createdAt).getMinutes()}`}
+                {silencerObj.edited && " (수정됨)"}
               </div>
             </div>
           </div>
-          {nweetObj.attachmentUrl && (
-            <div className={styles["nweet-box__img"]}>
+          {silencerObj.attachmentUrl && (
+            <div className={styles["silencer-box__img"]}>
               <img
-                src={nweetObj.attachmentUrl}
-                alt={nweetObj.attachmentUrl}
+                src={silencerObj.attachmentUrl}
+                alt={silencerObj.attachmentUrl}
                 onClick={() => {
                   setModalActive("post");
                 }}
@@ -202,27 +200,4 @@ const Nweet = ({ nweetObj, isOwner }) => {
   );
 };
 
-export default Nweet;
-
-// <h1>{nweetObj.text}</h1> => 포스팅한글
-
-{
-  /* <h1>{nweetObj.text}</h1>
-          {nweetObj.attachmentUrl && (
-            <div>
-              <img
-                src={nweetObj.attachmentUrl}
-                alt={nweetObj.attachmentUrl}
-                onClick={() => {
-                  setModalActive("post");
-                }}
-              />
-            </div>
-          )}
-          {isOwner && (
-            <>
-              <button onClick={onDeleteClick}>Delete Nweet</button>
-              <button onClick={toggleEditing}>Edit Nweet</button>
-            </>
-          )} */
-}
+export default Silencer;

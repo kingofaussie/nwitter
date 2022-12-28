@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { authService, dbService } from "fbase";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
-import Nweet from "components/Nweet";
-import NweetFactory from "components/NweetFactory";
+import Silencer from "components/Silencer";
 import { onAuthStateChanged } from "firebase/auth";
+import SilencerF from "components/SilencerF";
 
 const Home = ({ userObj }) => {
-  const [nweets, setNweets] = useState([]);
+  const [silencers, setSilencers] = useState([]);
   console.log(userObj);
   useEffect(() => {
     const q = query(
-      collection(dbService, "nweets"),
+      collection(dbService, "silencers"),
       orderBy("createdAt", "desc")
     );
     const unSubscribe = onSnapshot(q, (snapshot) => {
-      const nweetArr = snapshot.docs.map((doc) => ({
+      const silencerArr = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setNweets(nweetArr);
+      setSilencers(silencerArr);
     });
 
     onAuthStateChanged(authService, (user) => {
@@ -30,13 +30,13 @@ const Home = ({ userObj }) => {
 
   return (
     <div>
-      <NweetFactory userObj={userObj} />
+      <SilencerF userObj={userObj} />
       <div>
-        {nweets.map((nweet) => (
-          <Nweet
-            key={nweet.id}
-            nweetObj={nweet}
-            isOwner={nweet.creatorId === userObj.uid}
+        {silencers.map((silencer) => (
+          <Silencer
+            key={silencer.id}
+            silencerObj={silencer}
+            isOwner={silencer.creatorId === userObj.uid}
           />
         ))}
       </div>
